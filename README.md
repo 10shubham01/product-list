@@ -43,8 +43,8 @@
 ### Steps
 ```bash
 # Clone the repository
-git clone <repo-url>
-cd aerem-assignment
+git clone <https://github.com/10shubham01/product-list.git>
+cd product-list
 
 # Install dependencies
 pnpm install
