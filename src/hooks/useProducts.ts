@@ -2,7 +2,7 @@ import { useQuery, type UseQueryOptions } from 'react-query';
 import { fetchProducts, type ProductsResponse } from '../api/products.api';
 
 export const defaultQueryOptions = {
-  staleTime: 60_000,
+  staleTime: 1000 * 60,
   cacheTime: 1000 * 60 * 30,
   refetchOnWindowFocus: false,
 };

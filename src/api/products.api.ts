@@ -25,5 +25,5 @@ export async function fetchProducts(page: number, limit = 30): Promise<ProductsR
   if (!res.ok) {
     throw new Error('Failed to fetch products');
   }
-  return await res.json();
+  return res.json();
 }

@@ -8,14 +8,21 @@ type Props = {
 export const ProductCard = memo(({ product }: Props) => {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="mb-3 h-32 w-full rounded bg-gray-100 flex items-center justify-center">
+      <div className=" mb-3 h-32 relative w-full bg-gray-100 animate-pulse overflow-hidden">
         <img
           src={product.thumbnail}
           alt={product.title}
           loading="lazy"
-          className="h-full w-full object-contain"
+          className="h-full w-full object-contain opacity-0 transition-opacity duration-300"
+          onLoad={(e) => {
+            const img = e.currentTarget;
+            const wrapper = img.parentElement as HTMLDivElement;
+            img.classList.remove("opacity-0");
+            wrapper.classList.remove("animate-pulse", "bg-gray-100");
+          }}
         />
       </div>
+
       <h3 className="mb-2 text-lg font-semibold text-gray-900">
         {product.title}
       </h3>
