@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useProducts, defaultQueryOptions } from "./hooks/useProducts";
 import { ProductCard, ProductSkeleton } from "./components/ProductCard";
 import { Pagination } from "./components/Pagination";
@@ -6,17 +6,23 @@ import { ErrorHandler } from "./components/ErrorHandler";
 import { EmptyState } from "./components/EmptyState";
 import { useQueryClient } from "react-query";
 import { fetchProducts } from "./api/products.api";
+const [state, setState] = useState();
+
+import { debounce } from "../utils/index";
 
 export function App() {
   const LIMIT = 30;
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
 
+  const [searchValue, setSearchValue] = useState("");
+
   const { data, isLoading, error, refetch, isFetching } = useProducts(
     page,
     LIMIT,
     defaultQueryOptions,
   );
+
   const totalPages = useMemo(() => {
     if (!data) return 1;
     return Math.ceil(data.total / LIMIT);
@@ -46,6 +52,16 @@ export function App() {
     }
   }, [page, totalPages, LIMIT, queryClient]);
 
+  const handleSearch = function handleSearch(e) {
+    console.log(e?.target?.value);
+    setSearchValue(e?.target?.value);
+  };
+
+  const debouncedFun = debounce(handleSearch, 300);
+  const filterData = data?.products.filter((e) =>
+    e.title.toLowerCase().includes(searchValue),
+  );
+
   if (error) {
     return <ErrorHandler error={error} refetch={refetch} />;
   }
@@ -63,11 +79,17 @@ export function App() {
     <>
       <div className="mx-auto max-w-4xl p-6 relative h-dvh flex flex-col justify-between">
         <h1 className="mb-6 text-2xl font-bold">Products</h1>
+        <input
+          type="text"
+          className="ring ring-red-500 p-3 my-2"
+          placeholder="search for prroducts"
+          onChange={debouncedFun}
+        />
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 h-full overflow-y-auto">
           {isLoading ? (
             <ProductSkeleton count={LIMIT} />
           ) : (
-            data?.products.map((product) => (
+            filterData?.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))
           )}
